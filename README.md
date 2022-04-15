@@ -1,11 +1,13 @@
-# Weather App
+# ☁️ Weather App
 
 _Simple weather app for practice async code_
 
-- Assignment: [Odin lesson](https://www.theodinproject.com/lessons/node-path-javascript-weather-app)
-- Live preview: [https://greqov.github.io/odin-weather-app/](https://greqov.github.io/odin-weather-app/)
+📃 _Assignment:_ [Odin lesson](https://www.theodinproject.com/lessons/node-path-javascript-weather-app)<br>
+💻 _Live preview:_ [https://greqov.github.io/odin-weather-app/](https://greqov.github.io/odin-weather-app/)
 
-## Development
+---
+
+## 🛠️ Development
 
 - build a project
 
@@ -19,7 +21,7 @@ npm run build
 npm run start
 ```
 
-- publish 'dist' folder to github pages
+- publish `dist` folder to github pages
 
 ```bash
 npm run deploy
