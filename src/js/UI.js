@@ -1,9 +1,49 @@
-const ui = {
+import API from './api';
+import layout from './components/layout';
+
+class UI {
+  init() {
+    document.querySelector('html').classList.add('scroll-smooth');
+    document.body.classList.add(
+      'relative',
+      'min-h-screen',
+      'overflow-y-scroll',
+      'flex',
+      'flex-col',
+      'font-sans',
+      'bg-zinc-50',
+      'selection:bg-pink-300'
+    );
+    document.body.insertAdjacentHTML('beforeend', layout);
+    this.addHandlers();
+  }
+
+  addHandlers() {
+    const searchForm = document.querySelector('.js-search-form');
+
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // TODO: check for errors
+      const city = searchForm.querySelector('[name="city"]').value;
+
+      const geoData = await API.getGeoCoords(city);
+      console.log(`geoData`, geoData);
+      // TODO: render in one step
+      this.renderLocation(geoData[0]);
+
+      // TODO: pick right location
+      const { lat, lon } = geoData[0];
+      const weather = await API.getWeather(lat, lon);
+      this.renderWeather(weather);
+    });
+  }
+
   renderLocation({ name, state, country }) {
     const tmplt = `location: ${name}, ${state}, ${country}<br/>`;
     const containerEl = document.querySelector('.js-main');
     containerEl.insertAdjacentHTML('beforeend', tmplt);
-  },
+  }
 
   renderWeather({ current }) {
     const { icon, description, main } = current.weather[0];
@@ -28,7 +68,9 @@ const ui = {
 
     const containerEl = document.querySelector('.js-main');
     containerEl.insertAdjacentHTML('beforeend', template);
-  },
-};
+  }
+}
+
+const ui = new UI();
 
 export default ui;
