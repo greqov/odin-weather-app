@@ -40,6 +40,7 @@ class UI {
   }
 
   renderLocation({ name, state, country }) {
+    // TODO: fix no state case (search 'pnk')
     const tmplt = `location: ${name}, ${state}, ${country}<br/>`;
     const containerEl = document.querySelector('.js-main');
     containerEl.insertAdjacentHTML('beforeend', tmplt);
@@ -47,7 +48,7 @@ class UI {
 
   renderWeather({ current }) {
     const { icon, description, main } = current.weather[0];
-    const iconUrl = `http://openweathermap.org/img/wn/${icon}@2x.png`;
+    const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
 
     const template = `
       mememe<br/>

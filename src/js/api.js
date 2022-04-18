@@ -14,7 +14,7 @@ async function getData(url) {
 
 const API = {
   async getGeoCoords(city) {
-    const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=${limit}&appid=${API_KEY}`;
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=${limit}&appid=${API_KEY}`;
 
     const data = await getData(url);
     return data;
