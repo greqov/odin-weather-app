@@ -1,8 +1,8 @@
 const ui = {
   renderLocation({ name, state, country }) {
     const tmplt = `location: ${name}, ${state}, ${country}<br/>`;
-    // TODO: append to container
-    document.body.insertAdjacentHTML('beforeend', tmplt);
+    const containerEl = document.querySelector('.js-main');
+    containerEl.insertAdjacentHTML('beforeend', tmplt);
   },
 
   renderWeather({ current }) {
@@ -26,7 +26,8 @@ const ui = {
       feels: ${Math.round(current.feels_like)}<br/>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', template);
+    const containerEl = document.querySelector('.js-main');
+    containerEl.insertAdjacentHTML('beforeend', template);
   },
 };
 
