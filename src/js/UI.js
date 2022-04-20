@@ -1,6 +1,13 @@
 import API from './api';
 import layout from './components/layout';
 
+// QUESTION: move fn inside class?
+const replaceWithTemplate = function replaceWithTemplate(selector, template) {
+  const el = document.querySelector(selector);
+  el.replaceChildren();
+  el.insertAdjacentHTML('beforeend', template);
+};
+
 class UI {
   init() {
     document.querySelector('html').classList.add('scroll-smooth');
@@ -16,8 +23,6 @@ class UI {
     );
     document.body.insertAdjacentHTML('beforeend', layout);
     this.addHandlers();
-
-    // TODO: render default containers for location/weather?
   }
 
   addHandlers() {
@@ -47,8 +52,7 @@ class UI {
   renderLocation({ name, state, country }) {
     const stateStr = state ? `${state}, ` : '';
     const template = `<h1 class="mt-10 text-2xl font-bold text-center">${name}, ${stateStr} ${country}</h1>`;
-    const containerEl = document.querySelector('.js-main');
-    containerEl.insertAdjacentHTML('beforeend', template);
+    replaceWithTemplate('.js-location', template);
   }
 
   renderWeather({ current }) {
@@ -97,8 +101,7 @@ class UI {
     </div>
     `;
 
-    const containerEl = document.querySelector('.js-main');
-    containerEl.insertAdjacentHTML('beforeend', template);
+    replaceWithTemplate('.js-weather', template);
   }
 
   renderForecast() {
@@ -130,8 +133,7 @@ class UI {
     </div>
     `;
 
-    const containerEl = document.querySelector('.js-main');
-    containerEl.insertAdjacentHTML('beforeend', template);
+    replaceWithTemplate('.js-forecast', template);
   }
 }
 

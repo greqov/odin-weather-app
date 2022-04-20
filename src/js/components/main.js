@@ -14,6 +14,9 @@ function main() {
         />
       </label>
     </form>
+    <div class="js-location"></div>
+    <div class="js-weather"></div>
+    <div class="js-forecast"></div>
   </main>
   `;
 }
