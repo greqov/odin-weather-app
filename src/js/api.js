@@ -21,7 +21,7 @@ const API = {
   },
 
   async getWeather(lat, lon) {
-    const exclude = 'daily,hourly,minutely';
+    const exclude = 'hourly,minutely';
     const units = 'metric';
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&appid=${API_KEY}`;
 

@@ -45,7 +45,7 @@ class UI {
       this.renderWeather(weather);
 
       // TODO: refactor
-      this.renderForecast();
+      this.renderForecast(weather.daily);
     });
   }
 
@@ -65,6 +65,7 @@ class UI {
         class="block mx-auto"
         src="${iconUrl}"
         alt="${description}"
+        width="100" height="100"
       />
       <span class="flex flex-wrap items-center justify-center italic space-x-2">
         <span class="inline-block">${main},</span>
@@ -104,33 +105,35 @@ class UI {
     replaceWithTemplate('.js-weather', template);
   }
 
-  renderForecast() {
+  renderForecast(data) {
+    const daily = data;
+    daily.length = 5;
+
+    let str = '';
+
+    /* eslint-disable camelcase */
+    daily.forEach((day) => {
+      const { temp, wind_speed, weather } = day;
+      const { icon, description } = weather[0];
+      str += `
+        <div class="text-center mb-8">
+          <span class="block opacity-60">${'4/20'}</span>
+          <img
+            class="block mx-auto"
+            src="https://openweathermap.org/img/wn/${icon}@2x.png"
+            alt="${description}"
+            width="100" height="100"
+          />
+          <span class="block">${Math.round(temp.day)}°C</span>
+          <span class="block">${Math.round(wind_speed)}m/s</span>
+        </div>
+      `;
+    });
+    /* eslint-enable camelcase */
+
     const template = `
-    <div class="mx-auto my-10 border-b w-4/6"></div>
-
-    <div class="flex justify-center flex-wrap">
-      <div class="text-center">
-        <span class="block opacity-60">4/20</span>
-        <img
-          class="block mx-auto"
-          src="https://openweathermap.org/img/wn/04n@2x.png"
-          alt="overcast clouds"
-        />
-        <span class="block">2°C</span>
-        <span class="block">4m/s</span>
-      </div>
-
-      <div class="text-center">
-        <span class="block opacity-60">4/21</span>
-        <img
-          class="block mx-auto"
-          src="https://openweathermap.org/img/wn/04n@2x.png"
-          alt="overcast clouds"
-        />
-        <span class="block">2°C</span>
-        <span class="block">4m/s</span>
-      </div>
-    </div>
+      <div class="mx-auto my-10 border-b w-4/6"></div>
+      <div class="flex justify-center flex-wrap">${str}</div>
     `;
 
     replaceWithTemplate('.js-forecast', template);
