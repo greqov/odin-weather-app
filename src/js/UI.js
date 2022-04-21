@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 import API from './api';
 import layout from './components/layout';
 
@@ -113,11 +115,11 @@ class UI {
 
     /* eslint-disable camelcase */
     daily.forEach((day) => {
-      const { temp, wind_speed, weather } = day;
+      const { dt, temp, wind_speed, weather } = day;
       const { icon, description } = weather[0];
       str += `
         <div class="text-center mb-8">
-          <span class="block opacity-60">${'4/20'}</span>
+          <span class="block opacity-60">${format(dt * 1000, 'E d/L')}</span>
           <img
             class="block mx-auto"
             src="https://openweathermap.org/img/wn/${icon}@2x.png"
