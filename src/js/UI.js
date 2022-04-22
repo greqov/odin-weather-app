@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 
+import storage from './Storage';
 import API from './api';
 import layout from './components/layout';
 
@@ -38,12 +39,17 @@ class UI {
 
       const geoData = await API.getGeoCoords(city);
       console.log(`geoData`, geoData);
+      storage.save('geo', geoData);
+
+      const location = geoData[0];
+      storage.save('location', location);
       // TODO: render in one step
-      this.renderLocation(geoData[0]);
+      this.renderLocation(location);
 
       // TODO: pick right location
-      const { lat, lon } = geoData[0];
+      const { lat, lon } = location;
       const weather = await API.getWeather(lat, lon);
+      storage.save('weather', weather);
       this.renderWeather(weather);
 
       // TODO: refactor
