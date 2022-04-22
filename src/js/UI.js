@@ -26,6 +26,11 @@ class UI {
     );
     document.body.insertAdjacentHTML('beforeend', layout);
     this.addHandlers();
+
+    const location = storage.get('location');
+    if (location) {
+      this.renderMain(location);
+    }
   }
 
   addHandlers() {
@@ -43,18 +48,23 @@ class UI {
 
       const location = geoData[0];
       storage.save('location', location);
-      // TODO: render in one step
-      this.renderLocation(location);
 
-      // TODO: pick right location
-      const { lat, lon } = location;
-      const weather = await API.getWeather(lat, lon);
-      storage.save('weather', weather);
-      this.renderWeather(weather);
-
-      // TODO: refactor
-      this.renderForecast(weather.daily);
+      this.renderMain(location);
     });
+  }
+
+  async renderMain(location) {
+    // TODO: render in one step
+    this.renderLocation(location);
+
+    // TODO: pick right location
+    const { lat, lon } = location;
+    const weather = await API.getWeather(lat, lon);
+    storage.save('weather', weather);
+    this.renderWeather(weather);
+
+    // TODO: refactor
+    this.renderForecast(weather.daily);
   }
 
   renderLocation({ name, state, country }) {

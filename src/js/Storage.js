@@ -4,7 +4,7 @@ class Storage {
   }
 
   get(key) {
-    return localStorage.getItem(key);
+    return JSON.parse(localStorage.getItem(key));
   }
 }
 
