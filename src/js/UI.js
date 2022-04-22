@@ -51,6 +51,19 @@ class UI {
 
       this.renderMain(location);
     });
+
+    const unitsBtn = document.querySelector('.js-units');
+    unitsBtn.addEventListener('click', () => {
+      if (unitsBtn.dataset.units === 'metric') {
+        unitsBtn.dataset.units = 'imperial';
+        unitsBtn.textContent = '°F';
+        storage.save('units', 'imperial');
+      } else {
+        unitsBtn.dataset.units = 'metric';
+        unitsBtn.textContent = '°C';
+        storage.save('units', 'metric');
+      }
+    });
   }
 
   async renderMain(location) {
