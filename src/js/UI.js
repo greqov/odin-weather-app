@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 
+import storage from './Storage';
 import API from './api';
 import layout from './components/layout';
 
@@ -25,6 +26,11 @@ class UI {
     );
     document.body.insertAdjacentHTML('beforeend', layout);
     this.addHandlers();
+
+    const location = storage.get('location');
+    if (location) {
+      this.renderMain(location);
+    }
   }
 
   addHandlers() {
@@ -38,17 +44,27 @@ class UI {
 
       const geoData = await API.getGeoCoords(city);
       console.log(`geoData`, geoData);
-      // TODO: render in one step
-      this.renderLocation(geoData[0]);
+      storage.save('geo', geoData);
 
-      // TODO: pick right location
-      const { lat, lon } = geoData[0];
-      const weather = await API.getWeather(lat, lon);
-      this.renderWeather(weather);
+      const location = geoData[0];
+      storage.save('location', location);
 
-      // TODO: refactor
-      this.renderForecast(weather.daily);
+      this.renderMain(location);
     });
+  }
+
+  async renderMain(location) {
+    // TODO: render in one step
+    this.renderLocation(location);
+
+    // TODO: pick right location
+    const { lat, lon } = location;
+    const weather = await API.getWeather(lat, lon);
+    storage.save('weather', weather);
+    this.renderWeather(weather);
+
+    // TODO: refactor
+    this.renderForecast(weather.daily);
   }
 
   renderLocation({ name, state, country }) {
