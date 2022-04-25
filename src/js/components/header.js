@@ -13,7 +13,7 @@ function header() {
         <div class="flex items-center justify-between">
           <span class="block text-3xl font-bold">Weather App</span>
           <button
-            class="js-units text-2xl italic border-b border-dotted cursor-pointer"
+            class="js-units-btn text-2xl italic border-b border-dotted cursor-pointer"
             title="Change units"
             data-units="${units}"
             type="button"
