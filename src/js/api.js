@@ -1,3 +1,5 @@
+import storage from './Storage';
+
 const API_KEY = '0b409c06e12f4db8a7524fbfcca483c4';
 const limit = 5;
 
@@ -22,7 +24,8 @@ const API = {
 
   async getWeather(lat, lon) {
     const exclude = 'hourly,minutely';
-    const units = 'metric';
+    const units = storage.get('units') || 'metric';
+    console.log(`===> request with units`, units);
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&appid=${API_KEY}`;
 
     const data = await getData(url);

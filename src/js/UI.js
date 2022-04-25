@@ -3,12 +3,21 @@ import { format } from 'date-fns';
 import storage from './Storage';
 import API from './api';
 import layout from './components/layout';
+import { ftoc, ctof, mphToMs, msToMph } from './utils';
 
 // QUESTION: move fn inside class?
 const replaceWithTemplate = function replaceWithTemplate(selector, template) {
   const el = document.querySelector(selector);
   el.replaceChildren();
   el.insertAdjacentHTML('beforeend', template);
+};
+
+const convertTempTo = function (units, val) {
+  return units === 'metric' ? ftoc(val) : ctof(val);
+};
+
+const convertSpeedTo = function (units, val) {
+  return units === 'metric' ? mphToMs(val) : msToMph(val);
 };
 
 class UI {
@@ -33,6 +42,13 @@ class UI {
     }
   }
 
+  getUnits() {
+    const tempUnits = storage.get('units') === 'imperial' ? '°F' : '°C';
+    const speedUnits = storage.get('units') === 'imperial' ? 'mph' : 'm/s';
+
+    return { tempUnits, speedUnits };
+  }
+
   addHandlers() {
     const searchForm = document.querySelector('.js-search-form');
 
@@ -50,6 +66,21 @@ class UI {
       storage.save('location', location);
 
       this.renderMain(location);
+    });
+
+    const unitsBtn = document.querySelector('.js-units-btn');
+    unitsBtn.addEventListener('click', () => {
+      if (unitsBtn.dataset.units === 'metric') {
+        unitsBtn.dataset.units = 'imperial';
+        unitsBtn.textContent = '°F';
+        storage.save('units', 'imperial');
+      } else {
+        unitsBtn.dataset.units = 'metric';
+        unitsBtn.textContent = '°C';
+        storage.save('units', 'metric');
+      }
+
+      this.convertPrintedValues();
     });
   }
 
@@ -74,6 +105,7 @@ class UI {
   }
 
   renderWeather({ current }) {
+    const { tempUnits, speedUnits } = this.getUnits();
     const { icon, description, main } = current.weather[0];
     const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
 
@@ -87,11 +119,9 @@ class UI {
       />
       <span class="flex flex-wrap items-center justify-center italic space-x-2">
         <span class="inline-block">${main},</span>
-        <span
-          class="inline-block border-b border-dotted cursor-default"
-          title="feels like ${Math.round(current.feels_like)}&deg;C"
-        >
-          ${Math.round(current.temp)}&deg;C,
+        <span class="inline-block cursor-default">
+          <span class="js-temp-value">${Math.round(current.temp)}</span>
+          <span class="js-temp-units">${tempUnits}</span>,
         </span>
         <span class="inline-flex items-center">
           <span class="pr-1">
@@ -114,7 +144,10 @@ class UI {
               <line x1="12" y1="16" x2="12" y2="8"></line>
             </svg>
           </span>
-          <span>${Math.round(current.wind_speed)}m/s</span>
+          <span>
+            <span class="js-speed-value">${Math.round(current.wind_speed)}</span>
+            <span class="js-speed-units">${speedUnits}</span>
+          </span>
         </span>
       </span>
     </div>
@@ -124,6 +157,7 @@ class UI {
   }
 
   renderForecast(data) {
+    const { tempUnits, speedUnits } = this.getUnits();
     const daily = data;
     daily.length = 5;
 
@@ -142,8 +176,14 @@ class UI {
             alt="${description}"
             width="100" height="100"
           />
-          <span class="block">${Math.round(temp.day)}°C</span>
-          <span class="block">${Math.round(wind_speed)}m/s</span>
+          <span class="block">
+            <span class="js-temp-value">${Math.round(temp.day)}</span>
+            <span class="js-temp-units">${tempUnits}</span>
+          </span>
+          <span class="block">
+            <span class="js-speed-value">${Math.round(wind_speed)}</span>
+            <span class="js-speed-units">${speedUnits}</span>
+          </span>
         </div>
       `;
     });
@@ -155,6 +195,35 @@ class UI {
     `;
 
     replaceWithTemplate('.js-forecast', template);
+  }
+
+  convertPrintedValues() {
+    // convert F/C and C/F without additional request
+    const units = storage.get('units');
+    const { tempUnits, speedUnits } = this.getUnits();
+
+    const tempValues = document.querySelectorAll('.js-temp-value');
+    tempValues.forEach((item) => {
+      const el = item;
+      el.textContent = Math.round(convertTempTo(units, el.textContent));
+    });
+
+    const speedValues = document.querySelectorAll('.js-speed-value');
+    speedValues.forEach((item) => {
+      const el = item;
+      el.textContent = Math.round(convertSpeedTo(units, el.textContent));
+    });
+
+    // QUESTION: is better update together with values?
+    document.querySelectorAll('.js-temp-units').forEach((item) => {
+      const el = item;
+      el.textContent = tempUnits;
+    });
+
+    document.querySelectorAll('.js-speed-units').forEach((item) => {
+      const el = item;
+      el.textContent = speedUnits;
+    });
   }
 }
 
