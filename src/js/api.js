@@ -9,7 +9,7 @@ async function getData(url) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Wut!', error);
+    console.warn('Wut!', error);
     return null;
   }
 }
@@ -25,7 +25,6 @@ const API = {
   async getWeather(lat, lon) {
     const exclude = 'hourly,minutely';
     const units = storage.get('units') || 'metric';
-    console.log(`===> request with units`, units);
     const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&appid=${API_KEY}`;
 
     const data = await getData(url);

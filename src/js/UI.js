@@ -20,6 +20,32 @@ const convertSpeedTo = function (units, val) {
   return units === 'metric' ? mphToMs(val) : msToMph(val);
 };
 
+const validateField = function (el) {
+  if (el.getAttribute('name') === 'city') {
+    const message = el.closest('.js-search-form').querySelector('.js-city-message');
+
+    if (el.validity.valid) {
+      // hide errors
+      message.classList.add('hidden');
+      message.textContent = '';
+    } else {
+      // show errors
+      el.classList.add('has-validation');
+      message.classList.remove('hidden');
+
+      if (el.validity.valueMissing) {
+        message.textContent = 'Such empty! Type location to get weather forecast.';
+      } else if (el.validity.patternMismatch) {
+        message.textContent = `Type a single word with 3 letters minimum. Without spaces please.`;
+      }
+
+      return false;
+    }
+  }
+
+  return true;
+};
+
 class UI {
   init() {
     document.querySelector('html').classList.add('scroll-smooth');
@@ -51,15 +77,37 @@ class UI {
 
   addHandlers() {
     const searchForm = document.querySelector('.js-search-form');
+    const cityInput = searchForm.querySelector('[name="city"]');
+    const message = searchForm.querySelector('.js-city-message');
+
+    cityInput.addEventListener('input', () => {
+      if (cityInput.classList.contains('has-validation')) {
+        validateField(cityInput);
+      }
+    });
 
     searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // TODO: check for errors
-      const city = searchForm.querySelector('[name="city"]').value;
+      if (!validateField(cityInput)) {
+        return;
+      }
 
+      const city = searchForm.querySelector('[name="city"]').value;
       const geoData = await API.getGeoCoords(city);
-      console.log(`geoData`, geoData);
+
+      if (geoData === null) {
+        message.classList.remove('hidden');
+        message.textContent = 'Hmmm... Looks like a network error.';
+        return;
+      }
+
+      if (geoData.length === 0) {
+        message.classList.remove('hidden');
+        message.textContent = 'Nothing found. Try to adjust your query.';
+        return;
+      }
+
       storage.save('geo', geoData);
 
       const location = geoData[0];
@@ -91,7 +139,6 @@ class UI {
     // TODO: pick right location
     const { lat, lon } = location;
     const weather = await API.getWeather(lat, lon);
-    storage.save('weather', weather);
     this.renderWeather(weather);
 
     // TODO: refactor
@@ -100,7 +147,7 @@ class UI {
 
   renderLocation({ name, state, country }) {
     const stateStr = state ? `${state}, ` : '';
-    const template = `<h1 class="mt-10 text-2xl font-bold text-center">${name}, ${stateStr} ${country}</h1>`;
+    const template = `<h1 class="mt-20 text-2xl font-bold text-center">${name}, ${stateStr} ${country}</h1>`;
     replaceWithTemplate('.js-location', template);
   }
 

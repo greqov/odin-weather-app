@@ -4,7 +4,12 @@ class Storage {
   }
 
   get(key) {
-    return JSON.parse(localStorage.getItem(key));
+    try {
+      return JSON.parse(localStorage.getItem(key));
+    } catch (error) {
+      console.warn(`ERROR: Cannot restore "${key}" data from localStorage\n`, error);
+      return null;
+    }
   }
 }
 
