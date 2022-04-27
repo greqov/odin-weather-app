@@ -20,6 +20,32 @@ const convertSpeedTo = function (units, val) {
   return units === 'metric' ? mphToMs(val) : msToMph(val);
 };
 
+const validateField = function (el) {
+  if (el.getAttribute('name') === 'city') {
+    const message = el.closest('.js-search-form').querySelector('.js-city-message');
+
+    if (el.validity.valid) {
+      // hide errors
+      message.classList.add('hidden');
+      message.textContent = '';
+    } else {
+      // show errors
+      el.classList.add('has-validation');
+      message.classList.remove('hidden');
+
+      if (el.validity.valueMissing) {
+        message.textContent = 'Such empty! Type location to get weather forecast.';
+      } else if (el.validity.patternMismatch) {
+        message.textContent = `Type a single word with 3 letters minimum. Without spaces please.`;
+      }
+
+      return false;
+    }
+  }
+
+  return true;
+};
+
 class UI {
   init() {
     document.querySelector('html').classList.add('scroll-smooth');
@@ -51,11 +77,25 @@ class UI {
 
   addHandlers() {
     const searchForm = document.querySelector('.js-search-form');
+    const cityInput = searchForm.querySelector('[name="city"]');
+
+    cityInput.addEventListener('focusout', () => {
+      cityInput.classList.add('has-validation');
+    });
+
+    cityInput.addEventListener('input', () => {
+      if (cityInput.classList.contains('has-validation')) {
+        validateField(cityInput);
+      }
+    });
 
     searchForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // TODO: check for errors
+      if (!validateField(cityInput)) {
+        return;
+      }
+
       const city = searchForm.querySelector('[name="city"]').value;
 
       const geoData = await API.getGeoCoords(city);
@@ -100,7 +140,7 @@ class UI {
 
   renderLocation({ name, state, country }) {
     const stateStr = state ? `${state}, ` : '';
-    const template = `<h1 class="mt-10 text-2xl font-bold text-center">${name}, ${stateStr} ${country}</h1>`;
+    const template = `<h1 class="mt-20 text-2xl font-bold text-center">${name}, ${stateStr} ${country}</h1>`;
     replaceWithTemplate('.js-location', template);
   }
 
