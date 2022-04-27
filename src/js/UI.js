@@ -139,7 +139,6 @@ class UI {
     // TODO: pick right location
     const { lat, lon } = location;
     const weather = await API.getWeather(lat, lon);
-    storage.save('weather', weather);
     this.renderWeather(weather);
 
     // TODO: refactor
