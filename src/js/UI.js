@@ -94,14 +94,20 @@ class UI {
       }
 
       const city = searchForm.querySelector('[name="city"]').value;
-
       const geoData = await API.getGeoCoords(city);
+
+      if (geoData === null) {
+        message.classList.remove('hidden');
+        message.textContent = 'Hmmm... Looks like a network error.';
+        return;
+      }
+
       if (geoData.length === 0) {
         message.classList.remove('hidden');
         message.textContent = 'Nothing found. Try to adjust your query.';
         return;
       }
-      console.log(`geoData`, geoData);
+
       storage.save('geo', geoData);
 
       const location = geoData[0];
