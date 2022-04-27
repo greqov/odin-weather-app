@@ -78,10 +78,7 @@ class UI {
   addHandlers() {
     const searchForm = document.querySelector('.js-search-form');
     const cityInput = searchForm.querySelector('[name="city"]');
-
-    cityInput.addEventListener('focusout', () => {
-      cityInput.classList.add('has-validation');
-    });
+    const message = searchForm.querySelector('.js-city-message');
 
     cityInput.addEventListener('input', () => {
       if (cityInput.classList.contains('has-validation')) {
@@ -99,6 +96,11 @@ class UI {
       const city = searchForm.querySelector('[name="city"]').value;
 
       const geoData = await API.getGeoCoords(city);
+      if (geoData.length === 0) {
+        message.classList.remove('hidden');
+        message.textContent = 'Nothing found. Try to adjust your query.';
+        return;
+      }
       console.log(`geoData`, geoData);
       storage.save('geo', geoData);
 
