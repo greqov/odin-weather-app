@@ -7,6 +7,19 @@ _Simple weather app for practice async code_
 
 ---
 
+## 🔥 Features
+
+- shows weather 😀
+- remembers your last location
+- converts between imperial/metric units without additional request
+- handles some errors
+
+## 📄 TODO
+
+- [ ] add loader
+- [ ] ask browser location with Geo API
+- [ ] add "wrong location" feature
+
 ## 🛠️ Development
 
 - build a project

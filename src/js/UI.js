@@ -140,8 +140,6 @@ class UI {
     const { lat, lon } = location;
     const weather = await API.getWeather(lat, lon);
     this.renderWeather(weather);
-
-    // TODO: refactor
     this.renderForecast(weather.daily);
   }
 
@@ -245,7 +243,7 @@ class UI {
   }
 
   convertPrintedValues() {
-    // convert F/C and C/F without additional request
+    // convert metric/imperial units without additional request
     const units = storage.get('units');
     const { tempUnits, speedUnits } = this.getUnits();
 
